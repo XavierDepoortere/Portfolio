@@ -434,3 +434,16 @@ article .icon {
 .email-icon {
   height: 2.5rem;
 }
+
+/*-----------------------------------*\
+    FOOTER
+\*-----------------------------------*/
+
+footer {
+  height: 26vh;
+  margin: 0;
+}
+
+footer p {
+  text-align: center;
+}
