@@ -8,7 +8,7 @@ function toggleMenu() {
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
-
+    const toast = document.getElementById("toast");
     var formData = new FormData(this);
 
     fetch("contact.php", {
@@ -18,14 +18,29 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert(data.message);
           document.getElementById("form").reset();
+          toast.classList.add("success");
+          toast.innerText = "🚀 " + data.message;
+          setTimeout(() => {
+            toast.classList.remove("success");
+            toast.innerText = "";
+          }, 5000);
         } else {
-          alert("Erreur lors du traitement des données.");
+          toast.classList.add("warning");
+          toast.innerText = "⚠️ " + data.message;
+          setTimeout(() => {
+            toast.classList.remove("warning");
+            toast.innerText = "";
+          }, 5000);
         }
       })
       .catch((error) => {
-        alert("Erreur lors de la requête Fetch : " + error.message);
+        toast.classList.add("danger");
+        toast.innerText = "⚡ Un problème est survenu.";
+        setTimeout(() => {
+          toast.classList.remove("danger");
+          toast.innerText = "";
+        }, 5000);
       });
   });
 });

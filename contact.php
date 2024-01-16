@@ -2,32 +2,53 @@
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST["nom"];
-    $email = $_POST["email"];
-    $message = $_POST["message"];
+    try {
+        // Récupérer les données du formulaire
+        $nom = $_POST["nom"];
+        $email = $_POST["email"];
+        $message = $_POST["message"];
 
-    $destinataire = "depoorx@gmail.com";
-    $sujet = "Nouveau message de $nom";
+        // Valider que les champs ne sont pas vides
+        switch (true) {
+            case empty($nom):
+                throw new Exception("Le champ nom est vide.");
+            case empty($email):
+                throw new Exception("Le champ email est vide.");
+            case empty($message):
+                throw new Exception("Le champ message est vide.");
+        }
 
-    $corps = "Nom : $nom\n";
-    $corps .= "Email : $email\n";
-    $corps .= "Message : $message\n";
-    $entetes = "From: $email";
-    // Vous pouvez ajouter ici le code pour envoyer l'e-mail ou enregistrer les données dans une base de données, par exemple.
-    // Pour un exemple simple, nous allons simplement afficher les données :
-    $response = [
-        'success' => true,
-        'message' => 'Les données ont été traitées avec succèssss.',
-        'data' => [
-            'nom' => $nom,
-            'email' => $email,
-            'message' => $message
-        ]
-    ];
-    if (mail($destinataire, $sujet, $corps, $entetes)) {
+        $destinataire = "depoorx@gmail.com";
+        $sujet = "Nouveau message de $nom";
+
+        $corps = "Nom : $nom\n";
+        $corps .= "Email : $email\n";
+        $corps .= "Message : $message\n";
+        $entetes = "From: $email";
+        
+        // Envoyer l'e-mail
+        if (mail($destinataire, $sujet, $corps, $entetes)) {
+            $response = [
+                'success' => true,
+                'message' => 'Message envoyé avec succès.',
+                'data' => [
+                    'nom' => $nom,
+                    'email' => $email,
+                    'message' => $message
+                ]
+            ];
+            echo json_encode($response);
+        } else {
+            throw new Exception("Erreur lors de l'envoi de l'e-mail.");
+        }
+    } catch (Exception $e) {
+        $response = [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
         echo json_encode($response);
     }
-    
+
     exit;
 }
 ?>
